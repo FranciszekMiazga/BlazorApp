@@ -1,0 +1,99 @@
+﻿@page "/students"
+
+@using BlazorWebApplication.Data
+@using Microsoft.AspNetCore.Mvc
+@using System.Security.Policy
+@using BlazorWebApplication.Pages
+@inject StudentsService StudentService
+
+<h2 style="text-decoration:underline;">Studenci</h2>
+
+<NavLink class="nav-link" href="/students/createStudent">
+    <button class="btn btn-primary">Add student</button>
+</NavLink>
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th @onclick="()=>SortRecords(fName)">First Name</th>
+                <th @onclick="()=>SortRecords(lName)">Last Name</th>
+                <th @onclick="()=>SortRecords(bDate)">Birth Date</th>
+                <th @onclick="()=>SortRecords(studies)">Studies</th>
+            </tr>
+        </thead>
+        <tbody >
+            @foreach (var student in students)
+            {
+            <tr > 
+                <td @onclick="()=>Edit.FillStudent(student)">
+                <div onclick="location.href='students/editStudent';">
+                    <img src="/img/studentIcon.png" alt="Student" />
+                </div>
+                </td>
+                <td @onclick="()=>Edit.FillStudent(student)">
+                    <div onclick="location.href='students/editStudent';">
+                        @student.FirstName
+                    </div>
+                </td>
+                <td @onclick="()=>Edit.FillStudent(student)">
+                    <div onclick="location.href='students/editStudent';">
+                        @student.LastName
+                    </div>
+                </td>
+                <td @onclick="()=>Edit.FillStudent(student)">
+                    <div onclick="location.href='students/editStudent';">
+                        @student.Birthdate
+                    </div>
+                </td>
+                <td @onclick="()=>Edit.FillStudent(student)">
+                    <div onclick="location.href='students/editStudent';">
+                        @student.Studies
+                    </div>
+                </td>
+                <td>
+                    <input class="btn btn-danger" type="submit" value="X" @onclick="()=>DeleteStudent(student.IdStudent)" />
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+}
+@code {
+    private List<Student> students;
+    private String fName = "First Name";
+    private String lName = "Last Name";
+    private String bDate = "Birth Date";
+    private String studies = "Studies";
+
+    protected override async Task OnInitializedAsync()
+    {
+        students = await StudentService.GetStudentsAsync();
+
+    }
+    public void DeleteStudent(int IdStudent)
+    {
+        StudentService.DeleteStudent(IdStudent);
+    }
+    private bool IsAscending = false;
+    public void SortRecords(string HeaderName)
+    {
+        if (IsAscending)
+        {
+            students = StudentService.SortRecAsc(HeaderName);
+            IsAscending = false;
+        }
+        else
+        {
+            students = StudentService.SortRecDesc(HeaderName);
+            IsAscending = true;
+        }
+    }
+}

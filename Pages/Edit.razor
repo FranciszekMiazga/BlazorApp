@@ -1,0 +1,73 @@
+﻿@page "/students/editStudent"
+@inject NavigationManager navManager
+@inject StudentsService StudentService
+
+<h1>Students detials</h1>
+<hr/>
+
+<EditForm Model="Student" OnSubmit="EditStudent">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>First Name:</label>
+        <div>
+            <InputText class="form-control"  @bind-Value="@Student.FirstName"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Last Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Student.LastName" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Birth date:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@Student.Birthdate" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Studies:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Student.Studies" />
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-success" type="submit">Edit student</button>
+
+        <NavLink class="nav-link" href="/students">
+            <button class="btn btn-primary">Return</button>
+        </NavLink>
+    </div>
+
+</EditForm>
+@code{
+    [Parameter]
+    public static Student Student { get; set; }
+    public static int IdStudent = 0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Student = new Student();
+    }
+
+    public void EditStudent(EditContext context)
+    {
+        if (context.Validate())
+        {
+            Console.WriteLine("Dobrze");
+            Student.IdStudent = IdStudent;
+            StudentService.EditStudent(Student);
+        }
+
+    }
+    public static void FillStudent(Student student)
+    {
+
+        Student = student;
+        IdStudent = student.IdStudent;
+    }
+}
+
+
